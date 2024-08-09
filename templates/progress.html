@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>in progress</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            /*background-color: #0e577f;*/
+            background-color: #122743;
+            color: #edd8bc;
+        }
+    </style>
+
+    <script>
+        function checkStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'completed') {
+                        document.getElementById("statusMessage").textContent = "Done! Downloaded as output.csv";  //update if ready
+                        initiateDownload(); 
+                    } else {
+                        let minsLeft = data.total - data.current + 1;
+                        document.getElementById("statusMessage").textContent = `Parsing profile ${data.current}/${data.total}. About ${minsLeft} mins left`;
+                        setTimeout(checkStatus, 10000); 
+                    }
+                })
+                .catch(error => console.error('Error checking status:', error));
+        }
+
+        
+        function initiateDownload() {
+            window.location.href = '/download';  //redirect to trigger download
+        }
+
+        //checkStatus on 5 sec delay
+        window.onload = function() {
+            setTimeout(checkStatus, 10000);
+        };
+    </script>
+
+</head>
+<body>
+    <h4 id="statusMessage">Signing in to LinkedIn...</h4>
+</body>
+</html>
